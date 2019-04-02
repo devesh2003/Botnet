@@ -12,7 +12,7 @@ def start_session(s):
             cmd = struct.unpack("<%ds"%(cmd_size[0]),cmd[2:]).decode()
             if "execute" in cmd:
                 cmd = cmd.strip("execute ")
-
+                #Pending...
         except:
             pass
 
