@@ -69,6 +69,7 @@ def main():
     try:
         listener_thread = Thread(target=start_server,args=())
         listener_thread.start()
+        sleep(2)
         while True:
             cmd = input(">>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
