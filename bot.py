@@ -29,8 +29,8 @@ def start_session(s):
         #    cmd = struct.unpack("<%ds"%(cmd_size[0]),cmd[2:]).decode()
         #    if "execute" in cmd:
         #        cmd = cmd.strip("execute ")
-        except:
-            pass
+    except Exception as e:
+            print(str(e))
 
 def main():
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)

