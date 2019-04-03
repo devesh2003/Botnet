@@ -122,7 +122,7 @@ def get_screenshot(addr):
     image = resp
     check_container(addr)
     #os.chdir(addr)
-    file = open("scrnshot.png",'w')
+    file = open("scrnshot.png",'wb')
     file.write(image)
     file.close()
 
