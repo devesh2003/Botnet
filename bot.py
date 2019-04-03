@@ -30,6 +30,9 @@ def start_session(s):
                     file = open("HP.png",'rb')
                     data = file.read()
                     file.close()
+                    size = len(data)
+                    s.send("OK".encode())
+                    s.send(str(size).encode())
                     s.send(data)
                 except Exception as e:
                     print("[*] Error : %s"%(str(e)))
