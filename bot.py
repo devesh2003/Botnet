@@ -7,7 +7,6 @@ import struct
 import platform
 from time import sleep
 import pyautogui
-import winreg
 
 def start_session(s):
     while True:
@@ -93,5 +92,6 @@ def main():
     conn_process.start()
 
 if __name__ == '__main__':
-    main_thread = Thread(target=main,args=())
+    main_thread = Process(target=main,args=())
     main_thread.start()
+    main_thread.join()
