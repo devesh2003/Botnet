@@ -18,27 +18,3 @@ def test():
     proc = Thread(target=test,args=())
     #proc.setDaemon(True)
     proc.start()
-
-def create_botserver():
-    ip = load(request.urlopen("https://api.ipify.org/?format=json"))['ip']
-    print("IP : %s"%(ip))
-    port = 2000
-    ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    ss.bind((str(ip),port))
-    ss.listen()
-    print("Server started")
-    while True:
-        con,addr = ss.accept()
-        print("Connection!")
-        con.send("ALIVE".encode())
-        resp = con.recv(1024).decode()
-        if(resp == "RESTART"):
-            pass
-        elif(resp == "KILL"):
-            quit()
-        elif(resp == "OK"):
-            continue
-        else:
-            pass
-    
-create_botserver()
