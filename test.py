@@ -33,7 +33,7 @@ def create_botserver():
         con.send("ALIVE".encode())
         resp = con.recv(1024).decode()
         if(resp == "RESTART"):
-            main()
+            pass
         elif(resp == "KILL"):
             quit()
         elif(resp == "OK"):

