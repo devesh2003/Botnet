@@ -210,7 +210,9 @@ def main():
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
         listener_thread.stop()
-        sys.exit()
+        quit()
+    except:
+        print("[*] Unknown Error Occured ...")
 
 if __name__ == '__main__':
     main()

