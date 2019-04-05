@@ -234,7 +234,7 @@ def main():
             command_thread.join()
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
-        listener_thread.stop()
+        #listener_thread.kill()
         quit()
     except:
         print("[*] Unknown Error Occured ...")
