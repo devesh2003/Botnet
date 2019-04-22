@@ -28,6 +28,7 @@ def main():
         downloader_socket.send("1".encode())
     else:
         downloader_socket.send("0".encode())
+    downloader_socket.close()
 
 if __name__ == '__main__':
     main()

@@ -280,9 +280,7 @@ def main():
         while True:
             cmd = raw_input("\n>>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
-
             command_thread.start()
-
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
         #listener_thread.kill()
