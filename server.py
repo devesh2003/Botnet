@@ -254,8 +254,8 @@ def main():
         print("[*] Botnet Terminated!")
         #listener_thread.kill()
         quit()
-    except:
-        print("[*] Unknown Error Occured ...")
+    except Exception as ee:
+        print("[*] Unknown Error Occured : %s"%(str(ee)))
 
 if __name__ == '__main__':
     main()
