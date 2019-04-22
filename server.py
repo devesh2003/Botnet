@@ -1,11 +1,10 @@
 import socket
-import struct
 from threading import Thread
 from time import sleep
 import sys
 import os
 
-if(len(sys.argv) > 1):
+if len(sys.argv) > 1:
     payload_name = str(sys.argv[1])
 
 botnet = {} #Botnet dictionary

