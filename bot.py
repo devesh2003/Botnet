@@ -87,7 +87,7 @@ def start_session(s):
             if "REGISTRY" in cmd:
                 try:
                     if(start_regitry_edit()):
-                        s.send("SUCCESS".encode())
+                        s.send("OK".encode())
                     else:
                         s.send("FAILED".encode())
                 except:
