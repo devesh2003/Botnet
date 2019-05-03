@@ -51,11 +51,12 @@ def process_shell(cmd,s):
 def check_session():
     global ip,active
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    ss.connect((ip,2000))
     print("Connected 2")
     while True:
         try:
-            ss.send("1".encode())
+            sleep(3)
+            ss.connect((ip,2000))
+            #ss.send("1".encode())
         except socket.error:
             active = False
             return

