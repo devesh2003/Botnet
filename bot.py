@@ -57,7 +57,9 @@ def check_session():
         try:
             sleep(1)
             ss.send("1".encode())
-        except socket.error:
+            ss.recv(1024)
+            print("[*] Done")
+        except:
             active = False
             return
 
@@ -194,14 +196,12 @@ def main():
             s.connect((ip,2003))
             print("Connected")
             active = True
-            stop_threads = False
             conn_process = Thread(target=start_session,args=(s,))
             conn_checker = Thread(target=check_session,args=())
             conn_checker.start()
             conn_process.start()
             conn_process.join()
         except socket.error:
-            stop_threads = True
             print("Attempting to reconnect...")
             main()
         except:

@@ -34,6 +34,7 @@ def start_confirmation_server(ip="159.65.11.28",port=2000):
         #     s.close()
         #     return
         client,addr = s.accept()
+        client.send("2".encode())
         if(test_conns.get(str(addr[0]))):
             continue
         test_conns[str(addr[0])] = client
