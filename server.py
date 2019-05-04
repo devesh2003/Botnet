@@ -129,7 +129,7 @@ def detect_os():
         print("\n\n\n\n")
 
 def shutdown_botnet():
-    global botnet,test_conns,global server_sockets
+    global botnet,test_conns,server_sockets
     counter = 1
     for server in server_sockets:
         server.close()

