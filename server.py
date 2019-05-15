@@ -154,7 +154,7 @@ def shutdown_botnet():
     counter = 1
     for server in server_sockets:
         server.close()
-        print("[*] Server %d : Closed")
+        print("[*] Server %d : Closed"%(counter))
         counter += 1
     for t in test_conns:
         test_conns[t].close()
